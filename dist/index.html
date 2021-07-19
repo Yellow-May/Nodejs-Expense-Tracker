@@ -21,8 +21,8 @@
 				<div class="total">
 					<i class="fas fa-dollar-sign"></i>
 					<h2 id="balance">10,000</h2>
-					<!-- <i class="fas fa-long-arrow-alt-down" id="balance-type"></i> -->
-					<i class="fas fa-long-arrow-alt-up"></i>
+					<!-- <i class="fas fa-long-arrow-alt-down" ></i> -->
+					<i class="fas fa-long-arrow-alt-up" id="balanceType"></i>
 				</div>
 
 				<div class="costs"><span id="profit">50,000</span> | <span id="loss">40,000</span></div>
@@ -30,56 +30,56 @@
 
 			<section class="transactions">
 				<h1>Recent Transactions</h1>
-				<ul>
-					<li class="transaction-detail">
+				<ul id="transactionsList">
+					<li>
 						<div class="content">
 							<div class="type red">
 								<i class="fas fa-long-arrow-alt-down"></i>
 							</div>
 							<h3 class="description">Description</h3>
-							<button title="toggle-more" id="toggle-more">
+							<button title="toggle-more">
 								<i class="fas fa-ellipsis-h"></i>
 							</button>
 						</div>
 						<div class="more">
 							<div class="date"></div>
-							<button title="delete transaction" id="delete">
+							<button title="delete transaction">
 								<i class="fas fa-trash-alt"></i>
 							</button>
 						</div>
 					</li>
 
-					<li class="transaction-detail">
+					<li>
 						<div class="content">
 							<div class="type green">
 								<i class="fas fa-long-arrow-alt-up"></i>
 							</div>
 							<h3 class="description">Description</h3>
-							<button title="toggle-more" id="toggle-more">
+							<button title="toggle-more">
 								<i class="fas fa-ellipsis-h"></i>
 							</button>
 						</div>
 						<div class="more">
 							<div class="date"></div>
-							<button title="delete transaction" id="delete">
+							<button title="delete transaction">
 								<i class="fas fa-trash-alt"></i>
 							</button>
 						</div>
 					</li>
 
-					<li class="transaction-detail">
+					<li>
 						<div class="content">
 							<div class="type green">
 								<i class="fas fa-long-arrow-alt-up"></i>
 							</div>
 							<h3 class="description">Description</h3>
-							<button title="toggle-more" id="toggle-more">
+							<button title="toggle-more">
 								<i class="fas fa-ellipsis-h"></i>
 							</button>
 						</div>
 						<div class="more">
 							<div class="date"></div>
-							<button title="delete transaction" id="delete">
+							<button title="delete transaction">
 								<i class="fas fa-trash-alt"></i>
 							</button>
 						</div>
@@ -87,7 +87,7 @@
 				</ul>
 			</section>
 
-			<form action="">
+			<form>
 				<legend>Add New Expense</legend>
 				<input
 					type="text"
@@ -102,7 +102,7 @@
 					<option value="loss">- loss</option>
 				</select>
 				<input type="date" name="date" id="date" aria-label="date of transaction" />
-				<button type="submit">Add New</button>
+				<button type="submit" title="submit form">Add New</button>
 			</form>
 		</main>
 	</body>
