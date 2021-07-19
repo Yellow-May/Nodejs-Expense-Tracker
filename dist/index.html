@@ -5,9 +5,105 @@
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
+		<link
+			rel="stylesheet"
+			href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css"
+			referrerpolicy="no-referrer"
+		/>
 		<link rel="stylesheet" href="assets/css/styles.min.css" />
-		<script src="assets/js/app.js"></script>
+		<script src="assets/js/app.js" defer></script>
 		<title>Expense Tracker</title>
 	</head>
-	<body></body>
+	<body>
+		<main>
+			<section class="expense">
+				<h1>Your Balance</h1>
+				<div class="total">
+					<i class="fas fa-dollar-sign"></i>
+					<h2 id="balance">10,000</h2>
+					<!-- <i class="fas fa-long-arrow-alt-down" id="balance-type"></i> -->
+					<i class="fas fa-long-arrow-alt-up"></i>
+				</div>
+
+				<div class="costs"><span id="profit">50,000</span> | <span id="loss">40,000</span></div>
+			</section>
+
+			<section class="transactions">
+				<h1>Recent Transactions</h1>
+				<ul>
+					<li class="transaction-detail">
+						<div class="content">
+							<div class="type red">
+								<i class="fas fa-long-arrow-alt-down"></i>
+							</div>
+							<h3 class="description">Description</h3>
+							<button title="toggle-more" id="toggle-more">
+								<i class="fas fa-ellipsis-h"></i>
+							</button>
+						</div>
+						<div class="more">
+							<div class="date"></div>
+							<button title="delete transaction" id="delete">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>
+
+					<li class="transaction-detail">
+						<div class="content">
+							<div class="type green">
+								<i class="fas fa-long-arrow-alt-up"></i>
+							</div>
+							<h3 class="description">Description</h3>
+							<button title="toggle-more" id="toggle-more">
+								<i class="fas fa-ellipsis-h"></i>
+							</button>
+						</div>
+						<div class="more">
+							<div class="date"></div>
+							<button title="delete transaction" id="delete">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>
+
+					<li class="transaction-detail">
+						<div class="content">
+							<div class="type green">
+								<i class="fas fa-long-arrow-alt-up"></i>
+							</div>
+							<h3 class="description">Description</h3>
+							<button title="toggle-more" id="toggle-more">
+								<i class="fas fa-ellipsis-h"></i>
+							</button>
+						</div>
+						<div class="more">
+							<div class="date"></div>
+							<button title="delete transaction" id="delete">
+								<i class="fas fa-trash-alt"></i>
+							</button>
+						</div>
+					</li>
+				</ul>
+			</section>
+
+			<form action="">
+				<legend>Add New Expense</legend>
+				<input
+					type="text"
+					name="description"
+					id="desc"
+					aria-label="describe the transaction"
+					placeholder="Describe the transaction..."
+					autocomplete="off"
+				/>
+				<select id="types" name="type" aria-label="select profit/loss">
+					<option value="profit">+ profit</option>
+					<option value="loss">- loss</option>
+				</select>
+				<input type="date" name="date" id="date" aria-label="date of transaction" />
+				<button type="submit">Add New</button>
+			</form>
+		</main>
+	</body>
 </html>

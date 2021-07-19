@@ -1,9 +1,29 @@
+@import url("https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;700&display=swap");
+
+$family-lato: "Lato", sans-serif;
+$family-noto: "Noto Sans JP", sans-serif;
+
 * {
 	box-sizing: border-box;
 	margin: 0;
 	padding: 0;
+	font-family: $family-lato;
+	font-weight: 400;
 }
 
 main {
 	display: block;
+}
+
+button {
+	cursor: pointer;
+}
+
+input,
+select,
+button {
+	outline: none;
+	background: transparent;
+	border: none;
 }
