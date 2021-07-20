@@ -26,7 +26,7 @@ body {
 		}
 
 		section {
-			margin-bottom: 50px;
+			margin-bottom: 30px;
 		}
 	}
 
@@ -44,7 +44,7 @@ body {
 
 				i {
 					&:first-child {
-						color: aquamarine;
+						color: rgba(98, 217, 255, 1);
 						font-size: 2.25em;
 						margin-right: 5px;
 					}
@@ -87,6 +87,7 @@ body {
 				list-style: none;
 				max-height: 165px;
 				overflow-y: scroll;
+				margin-top: 20px;
 
 				&::-webkit-scrollbar {
 					width: 1px;
@@ -95,26 +96,26 @@ body {
 
 			li {
 				width: 100%;
+				box-shadow: 1.5px 1.5px 1.5px 0px rgba(black, 0.25);
 
 				.content {
 					background-color: azure;
 					display: flex;
 					justify-content: flex-start;
 					align-items: center;
-					border-radius: 5px;
-					border-bottom-right-radius: unset;
+					border-top-right-radius: 5px;
+					border-top-left-radius: 5px;
 
 					.type {
 						padding: 10px;
-						border-bottom-left-radius: 5px;
 						border-top-left-radius: 5px;
 						color: white;
 						font-size: 0.875em;
 
-						&.green {
+						&.profit {
 							background-color: rgba(10, 255, 10, 1);
 						}
-						&.red {
+						&.loss {
 							background-color: rgba(255, 10, 10, 1);
 						}
 					}
@@ -123,8 +124,11 @@ body {
 						font-size: 1em;
 						letter-spacing: 2px;
 						flex: 1;
-						text-transform: sentencecase;
 						margin: 0 10px;
+
+						&::before {
+							content: "$";
+						}
 					}
 
 					button {
@@ -139,8 +143,7 @@ body {
 
 				.more {
 					height: 0;
-					width: 50%;
-					margin-left: auto;
+					width: 100%;
 					overflow: hidden;
 					transition: 0.25s;
 					display: flex;
@@ -151,8 +154,28 @@ body {
 					background-color: azure;
 
 					&.open {
-						height: 25px;
-						padding: 5px 10px;
+						height: 30px;
+						padding: 10px;
+						border-top: thin solid white;
+					}
+
+					div {
+						font-size: 1.5em;
+						color: grey;
+
+						span {
+							color: black;
+
+							&.date {
+								font-size: 0.55em;
+								font-weight: 300;
+								width: 30%;
+							}
+
+							&.desc {
+								font-size: 0.6em;
+							}
+						}
 					}
 
 					button {
@@ -189,7 +212,7 @@ body {
 
 		button {
 			margin-top: 10px;
-			box-shadow: 1px 1px 1px 0px rgba(black, 0.125);
+			box-shadow: 1.5px 1.5px 1.5px 0px rgba(black, 0.25);
 			border-radius: 5px;
 			text-transform: uppercase;
 			font-size: 0.875em;
@@ -198,12 +221,16 @@ body {
 			font-weight: 400;
 			padding: 7.5px;
 			transition: 0.25s;
+
+			&:hover {
+				background-color: rgba(98, 217, 255, 1);
+			}
 		}
 
 		input,
 		select {
 			height: 30px;
-			box-shadow: 1px 1px 1px 0px rgba(black, 0.125);
+			box-shadow: 1.5px 1.5px 1.5px 0px rgba(black, 0.25);
 			border-radius: 5px;
 			padding: 5px;
 			font-size: 0.875em;

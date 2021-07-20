@@ -30,65 +30,23 @@
 
 			<section class="transactions">
 				<h1>Recent Transactions</h1>
-				<ul id="transactionsList">
-					<li>
-						<div class="content">
-							<div class="type red">
-								<i class="fas fa-long-arrow-alt-down"></i>
-							</div>
-							<h3 class="description">Description</h3>
-							<button title="toggle-more">
-								<i class="fas fa-ellipsis-h"></i>
-							</button>
-						</div>
-						<div class="more">
-							<div class="date"></div>
-							<button title="delete transaction">
-								<i class="fas fa-trash-alt"></i>
-							</button>
-						</div>
-					</li>
-
-					<li>
-						<div class="content">
-							<div class="type green">
-								<i class="fas fa-long-arrow-alt-up"></i>
-							</div>
-							<h3 class="description">Description</h3>
-							<button title="toggle-more">
-								<i class="fas fa-ellipsis-h"></i>
-							</button>
-						</div>
-						<div class="more">
-							<div class="date"></div>
-							<button title="delete transaction">
-								<i class="fas fa-trash-alt"></i>
-							</button>
-						</div>
-					</li>
-
-					<li>
-						<div class="content">
-							<div class="type green">
-								<i class="fas fa-long-arrow-alt-up"></i>
-							</div>
-							<h3 class="description">Description</h3>
-							<button title="toggle-more">
-								<i class="fas fa-ellipsis-h"></i>
-							</button>
-						</div>
-						<div class="more">
-							<div class="date"></div>
-							<button title="delete transaction">
-								<i class="fas fa-trash-alt"></i>
-							</button>
-						</div>
-					</li>
-				</ul>
+				<ul id="transactionsList"></ul>
 			</section>
 
 			<form>
 				<legend>Add New Expense</legend>
+				<input
+					type="number"
+					name="amount"
+					id="amount"
+					aria-label="amount to be registered"
+					placeholder="Enter amount..."
+					autocomplete="off"
+				/>
+				<select id="types" name="type" aria-label="select profit/loss">
+					<option value="profit">+ profit</option>
+					<option value="loss">- loss</option>
+				</select>
 				<input
 					type="text"
 					name="description"
@@ -97,10 +55,6 @@
 					placeholder="Describe the transaction..."
 					autocomplete="off"
 				/>
-				<select id="types" name="type" aria-label="select profit/loss">
-					<option value="profit">+ profit</option>
-					<option value="loss">- loss</option>
-				</select>
 				<input type="date" name="date" id="date" aria-label="date of transaction" />
 				<button type="submit" title="submit form">Add New</button>
 			</form>
