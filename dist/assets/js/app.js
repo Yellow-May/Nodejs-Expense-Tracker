@@ -1,4 +1,13 @@
 "use strict";
+var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
+    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
+    return new (P || (P = Promise))(function (resolve, reject) {
+        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
+        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
+        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
+        step((generator = generator.apply(thisArg, _arguments || [])).next());
+    });
+};
 // expense section
 const balanceEl = document.getElementById("balance");
 const balanceTypeEl = document.getElementById("balanceType");
@@ -10,73 +19,9 @@ const amountInp = document.getElementById("amount");
 const descInp = document.getElementById("desc");
 const typesSel = document.getElementById("types");
 const dateInp = document.getElementById("date");
-// app state
-const state = {
-    balance: 14000,
-    profit: 36000,
-    loss: 22000,
-    transactions: [
-        {
-            id: "1",
-            amount: 20000,
-            description: "Bought a car",
-            date: new Date("2021-07-18"),
-            type: "loss",
-        },
-        {
-            id: "2",
-            amount: 500,
-            description: "Youtube payment",
-            date: new Date("2021-07-10"),
-            type: "profit",
-        },
-        {
-            id: "3",
-            amount: 10000,
-            description: "Contract work payment",
-            date: new Date("2021-07-08"),
-            type: "profit",
-        },
-        {
-            id: "4",
-            amount: 1000,
-            description: "Bills Payment",
-            date: new Date("2021-07-02"),
-            type: "loss",
-        },
-        {
-            id: "5",
-            amount: 1000,
-            description: "Miscellaneous",
-            date: new Date("2021-07-02"),
-            type: "loss",
-        },
-        {
-            id: "6",
-            amount: 15000,
-            description: "Contract work payment",
-            date: new Date("2021-07-01"),
-            type: "profit",
-        },
-        {
-            id: "7",
-            amount: 10000,
-            description: "Contract work payment",
-            date: new Date("2021-06-20"),
-            type: "profit",
-        },
-        {
-            id: "8",
-            amount: 500,
-            description: "Youtube payment",
-            date: new Date("2021-06-10"),
-            type: "profit",
-        },
-    ],
-};
 const createTransactionEl = (transaction) => {
     const wrapper = document.createElement("li");
-    wrapper.setAttribute("data-id", transaction.id);
+    wrapper.setAttribute("data-id", transaction._id);
     const content = document.createElement("div");
     content.className = "content";
     const transactionType = document.createElement("div");
@@ -101,7 +46,7 @@ const createTransactionEl = (transaction) => {
     details.className = "details";
     const dateSpan = document.createElement("span");
     dateSpan.className = "date";
-    dateSpan.innerText = transaction.date.toLocaleDateString();
+    dateSpan.innerText = transaction.date;
     const descSpan = document.createElement("span");
     descSpan.className = "desc";
     descSpan.innerText = transaction.description;
@@ -119,20 +64,6 @@ const createTransactionEl = (transaction) => {
     wrapper.append(more);
     return wrapper;
 };
-const render = () => {
-    // transactions section
-    const transactionsListEl = document.getElementById("transactionsList");
-    if (balanceEl && balanceTypeEl && profitEl && lossEl && transactionsListEl) {
-        balanceEl.innerText = state.balance.toLocaleString();
-        balanceTypeEl.className =
-            state.balance < 0 ? "fas fa-long-arrow-alt-down" : "fas fa-long-arrow-alt-up";
-        balanceTypeEl.style.display = state.balance === 0 ? "none" : "";
-        profitEl.innerText = state.profit.toLocaleString();
-        lossEl.innerText = state.loss.toLocaleString();
-        const transactions = state.transactions.map(transaction => createTransactionEl(transaction));
-        transactions.forEach(transaction => transactionsListEl.append(transaction));
-    }
-};
 const uiFuncs = () => {
     const transactions = document.getElementById("transactionsList").querySelectorAll("li");
     if (transactions) {
@@ -142,37 +73,96 @@ const uiFuncs = () => {
             const more = transaction.querySelector(".more");
             btnToggle === null || btnToggle === void 0 ? void 0 : btnToggle.addEventListener("click", () => more === null || more === void 0 ? void 0 : more.classList.toggle("open"));
             const btnDel = more === null || more === void 0 ? void 0 : more.querySelector("button");
-            btnDel === null || btnDel === void 0 ? void 0 : btnDel.addEventListener("click", () => {
-                transaction.remove();
-            });
+            btnDel === null || btnDel === void 0 ? void 0 : btnDel.addEventListener("click", () => __awaiter(void 0, void 0, void 0, function* () {
+                try {
+                    const res = yield fetch(`/api/v1/expense/${transaction.dataset.id}`, {
+                        method: "DELETE",
+                    });
+                    const status = res.status;
+                    if (status === 200)
+                        yield render();
+                }
+                catch (err) {
+                    console.log(err);
+                }
+            }));
         });
     }
 };
+const render = () => __awaiter(void 0, void 0, void 0, function* () {
+    // transactions section
+    const transactionsListEl = document.getElementById("transactionsList");
+    try {
+        const res = yield fetch("/api/v1/expense");
+        const data = (yield res.json()).expenses;
+        const profit = data
+            .filter(transaction => transaction.type === "profit")
+            .reduce((a, b) => a + b.amount, 0);
+        const loss = data
+            .filter(transaction => transaction.type === "loss")
+            .reduce((a, b) => a + b.amount, 0);
+        const balance = profit - loss;
+        if (balanceEl && balanceTypeEl && profitEl && lossEl && transactionsListEl) {
+            balanceEl.innerText = balance.toLocaleString();
+            balanceTypeEl.className =
+                balance < 0 ? "fas fa-long-arrow-alt-down" : "fas fa-long-arrow-alt-up";
+            balanceTypeEl.style.display = balance === 0 ? "none" : "";
+            profitEl.innerText = profit.toLocaleString();
+            lossEl.innerText = loss.toLocaleString();
+            Array.from(transactionsListEl.children).forEach(el => el.remove());
+            const transactions = data.map(transaction => createTransactionEl(transaction));
+            transactions.forEach(transaction => transactionsListEl.append(transaction));
+            uiFuncs();
+        }
+    }
+    catch (err) {
+        console.log(err);
+    }
+});
 const formEvent = () => {
     if (formEl && amountInp && descInp && typesSel && dateInp) {
-        formEl.addEventListener("submit", e => {
+        formEl.addEventListener("submit", (e) => __awaiter(void 0, void 0, void 0, function* () {
             e.preventDefault();
-            if (amountInp.value && descInp.value && typesSel.value && dateInp.value) {
-                const newTransaction = {
-                    amount: amountInp.value,
-                    description: descInp.value,
-                    type: typesSel.value,
-                    date: dateInp.value,
-                };
-                console.log(newTransaction);
+            if (amountInp.value && descInp.value && typesSel.value) {
+                const newTransaction = dateInp.value
+                    ? {
+                        amount: amountInp.value,
+                        description: descInp.value,
+                        type: typesSel.value,
+                        date: new Date(dateInp.value).toLocaleDateString(),
+                    }
+                    : {
+                        amount: amountInp.value,
+                        description: descInp.value,
+                        type: typesSel.value,
+                    };
+                try {
+                    const res = yield fetch("/api/v1/expense", {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(newTransaction),
+                    });
+                    const status = res.status;
+                    if (status === 201)
+                        yield render();
+                }
+                catch (err) {
+                    console.log(err);
+                }
                 amountInp.value = "";
                 descInp.value = "";
                 typesSel.value = "";
                 dateInp.value = "";
             }
-        });
+        }));
     }
 };
-document.addEventListener("DOMContentLoaded", () => {
-    render();
-    uiFuncs();
+document.addEventListener("DOMContentLoaded", () => __awaiter(void 0, void 0, void 0, function* () {
+    yield render();
     formEvent();
-});
+}));
 // with db
 // getTransactions
 // postTransaction

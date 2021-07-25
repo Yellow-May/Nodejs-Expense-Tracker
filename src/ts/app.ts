@@ -12,79 +12,17 @@ const typesSel = document.getElementById("types") as HTMLSelectElement;
 const dateInp = document.getElementById("date") as HTMLInputElement;
 
 // app state
-const state = {
-	balance: 14000,
-	profit: 36000,
-	loss: 22000,
-	transactions: [
-		{
-			id: "1",
-			amount: 20000,
-			description: "Bought a car",
-			date: new Date("2021-07-18"),
-			type: "loss",
-		},
-		{
-			id: "2",
-			amount: 500,
-			description: "Youtube payment",
-			date: new Date("2021-07-10"),
-			type: "profit",
-		},
-		{
-			id: "3",
-			amount: 10000,
-			description: "Contract work payment",
-			date: new Date("2021-07-08"),
-			type: "profit",
-		},
-		{
-			id: "4",
-			amount: 1000,
-			description: "Bills Payment",
-			date: new Date("2021-07-02"),
-			type: "loss",
-		},
-		{
-			id: "5",
-			amount: 1000,
-			description: "Miscellaneous",
-			date: new Date("2021-07-02"),
-			type: "loss",
-		},
-		{
-			id: "6",
-			amount: 15000,
-			description: "Contract work payment",
-			date: new Date("2021-07-01"),
-			type: "profit",
-		},
-		{
-			id: "7",
-			amount: 10000,
-			description: "Contract work payment",
-			date: new Date("2021-06-20"),
-			type: "profit",
-		},
-		{
-			id: "8",
-			amount: 500,
-			description: "Youtube payment",
-			date: new Date("2021-06-10"),
-			type: "profit",
-		},
-	],
-};
-
-const createTransactionEl = (transaction: {
-	id: string;
+type TransactionType = {
+	_id: string;
 	amount: number;
 	description: string;
-	date: Date;
+	date: string;
 	type: string;
-}) => {
+};
+
+const createTransactionEl = (transaction: TransactionType) => {
 	const wrapper = document.createElement("li");
-	wrapper.setAttribute("data-id", transaction.id);
+	wrapper.setAttribute("data-id", transaction._id);
 
 	const content = document.createElement("div");
 	content.className = "content";
@@ -120,7 +58,7 @@ const createTransactionEl = (transaction: {
 
 	const dateSpan = document.createElement("span");
 	dateSpan.className = "date";
-	dateSpan.innerText = transaction.date.toLocaleDateString();
+	dateSpan.innerText = transaction.date;
 
 	const descSpan = document.createElement("span");
 	descSpan.className = "desc";
@@ -147,23 +85,6 @@ const createTransactionEl = (transaction: {
 	return wrapper;
 };
 
-const render = () => {
-	// transactions section
-	const transactionsListEl = document.getElementById("transactionsList");
-
-	if (balanceEl && balanceTypeEl && profitEl && lossEl && transactionsListEl) {
-		balanceEl.innerText = state.balance.toLocaleString();
-		balanceTypeEl.className =
-			state.balance < 0 ? "fas fa-long-arrow-alt-down" : "fas fa-long-arrow-alt-up";
-		balanceTypeEl.style.display = state.balance === 0 ? "none" : "";
-		profitEl.innerText = state.profit.toLocaleString();
-		lossEl.innerText = state.loss.toLocaleString();
-
-		const transactions = state.transactions.map(transaction => createTransactionEl(transaction));
-		transactions.forEach(transaction => transactionsListEl.append(transaction));
-	}
-};
-
 const uiFuncs = () => {
 	const transactions = (
 		document.getElementById("transactionsList") as HTMLUListElement
@@ -177,27 +98,91 @@ const uiFuncs = () => {
 			btnToggle?.addEventListener("click", () => more?.classList.toggle("open"));
 
 			const btnDel = more?.querySelector("button");
-			btnDel?.addEventListener("click", () => {
-				transaction.remove();
+			btnDel?.addEventListener("click", async () => {
+				try {
+					const res = await fetch(`/api/v1/expense/${transaction.dataset.id}`, {
+						method: "DELETE",
+					});
+					const status = res.status;
+
+					if (status === 200) await render();
+				} catch (err) {
+					console.log(err);
+				}
 			});
 		});
 	}
 };
 
+const render = async () => {
+	// transactions section
+	const transactionsListEl = document.getElementById("transactionsList");
+
+	try {
+		const res = await fetch("/api/v1/expense");
+		const data = (await res.json()).expenses as TransactionType[];
+
+		const profit = data
+			.filter(transaction => transaction.type === "profit")
+			.reduce((a, b) => a + b.amount, 0);
+		const loss = data
+			.filter(transaction => transaction.type === "loss")
+			.reduce((a, b) => a + b.amount, 0);
+		const balance = profit - loss;
+
+		if (balanceEl && balanceTypeEl && profitEl && lossEl && transactionsListEl) {
+			balanceEl.innerText = balance.toLocaleString();
+			balanceTypeEl.className =
+				balance < 0 ? "fas fa-long-arrow-alt-down" : "fas fa-long-arrow-alt-up";
+			balanceTypeEl.style.display = balance === 0 ? "none" : "";
+			profitEl.innerText = profit.toLocaleString();
+			lossEl.innerText = loss.toLocaleString();
+
+			Array.from(transactionsListEl.children).forEach(el => el.remove());
+
+			const transactions = data.map(transaction => createTransactionEl(transaction));
+			transactions.forEach(transaction => transactionsListEl.append(transaction));
+
+			uiFuncs();
+		}
+	} catch (err) {
+		console.log(err);
+	}
+};
+
 const formEvent = () => {
 	if (formEl && amountInp && descInp && typesSel && dateInp) {
-		formEl.addEventListener("submit", e => {
+		formEl.addEventListener("submit", async e => {
 			e.preventDefault();
 
-			if (amountInp.value && descInp.value && typesSel.value && dateInp.value) {
-				const newTransaction = {
-					amount: amountInp.value,
-					description: descInp.value,
-					type: typesSel.value,
-					date: dateInp.value,
-				};
+			if (amountInp.value && descInp.value && typesSel.value) {
+				const newTransaction = dateInp.value
+					? {
+							amount: amountInp.value,
+							description: descInp.value,
+							type: typesSel.value,
+							date: new Date(dateInp.value).toLocaleDateString(),
+					  }
+					: {
+							amount: amountInp.value,
+							description: descInp.value,
+							type: typesSel.value,
+					  };
 
-				console.log(newTransaction);
+				try {
+					const res = await fetch("/api/v1/expense", {
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+						},
+						body: JSON.stringify(newTransaction),
+					});
+					const status = res.status;
+
+					if (status === 201) await render();
+				} catch (err) {
+					console.log(err);
+				}
 
 				amountInp.value = "";
 				descInp.value = "";
@@ -208,9 +193,8 @@ const formEvent = () => {
 	}
 };
 
-document.addEventListener("DOMContentLoaded", () => {
-	render();
-	uiFuncs();
+document.addEventListener("DOMContentLoaded", async () => {
+	await render();
 	formEvent();
 });
 
